@@ -1,16 +1,16 @@
 import sqlite3
-import sys
 
-from PyQt5.QtWidgets import QWidget, QTableWidgetItem, QApplication
-from PyQt5 import uic
+from PyQt5.QtWidgets import QWidget, QTableWidgetItem
+import main
+import addEditCoffeeForm
 
 
-class Form(QWidget):
+class Form(QWidget, main.Ui_Form):
     def __init__(self):
         super().__init__()
-        uic.loadUi('main.ui', self)
+        self.setupUi(self)
 
-        self.con = sqlite3.connect("coffee.db3")
+        self.con = sqlite3.connect("../data/coffee.db3")
         self.cur = self.con.cursor()
 
         self.tableWidget.cellDoubleClicked.connect(self.open)
@@ -36,12 +36,13 @@ class Form(QWidget):
         self.con.close()
 
 
-class Second(QWidget):
+class Second(QWidget, addEditCoffeeForm.Ui_Form):
     def __init__(self, connection, parent):
         super().__init__()
+        self.setupUi(self)
+
         self.con = connection
         self.parent = parent
-        uic.loadUi('addEditCoffeeForm.ui', self)
 
         self.btn.clicked.connect(self.create)
 
@@ -100,15 +101,3 @@ class Second(QWidget):
         pr = self.table_second.rowCount()
 
         self.table_second.setRowCount(pr + 1)
-
-
-def except_hook(cls, exception, traceback):
-    sys.__excepthook__(cls, exception, traceback)
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = Form()
-    ex.show()
-    sys.excepthook = except_hook
-    sys.exit(app.exec())
